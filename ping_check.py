@@ -1,5 +1,6 @@
 import subprocess
 import platform
+from datetime import datetime
 
 def ping_host(host):
     system = platform.system()
@@ -10,10 +11,17 @@ def ping_host(host):
     
     result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
+    time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
     if result.returncode == 0:
-        print(f"[✓] {host} 在线")
+        msg = f"[{time_now}] [✓] {host} 在线"
     else:
-        print(f"[✗] {host} 离线或不可达")
+        msg = f"[{time_now}] [✗] {host} 离线或不可达"
+    
+    print(msg)
+    
+    with open("ping_log.txt", "a", encoding="utf-8") as f:
+        f.write(msg + "\n")
 
 if __name__ == "__main__":
     hosts = [
