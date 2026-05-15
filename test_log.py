@@ -1,21 +1,23 @@
-import paramiko
+import socket
 
-# 你的服务器信息
-hostname = "39.105.70.21"
-username = "root"
-password = " "  # 替换成你设置的密码
+def check_port(host, port, timeout=3):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        result = sock.connect_ex((host, port))
+        sock.close()
+        if result == 0:
+            print(f"[✓] {host}:{port} 端口开放")
+        else:
+            print(f"[✗] {host}:{port} 端口关闭或不可达")
+    except Exception as e:
+        print(f"[!] 检测失败：{e}")
 
-try:
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(hostname, port=22, username=username, password=password, timeout=10)
-    
-    # 执行一个简单命令验证
-    stdin, stdout, stderr = client.exec_command("echo '连接成功' && whoami")
-    print(stdout.read().decode())
-    
-    client.close()
-    print("SSH登录测试通过 ✅")
-
-except Exception as e:
-    print(f"连接失败 ❌：{e}")
+if __name__ == "__main__":
+    targets = [
+        ("8.8.8.8", 53),
+        ("baidu.com", 80),
+        ("baidu.com", 443),
+    ]
+    for host, port in targets:
+        check_port(host, port)
