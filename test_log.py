@@ -1,4 +1,5 @@
 import socket
+import csv
 
 def check_port(host, port, timeout=3):
     try:
